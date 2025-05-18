@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
 import { FaApple } from 'react-icons/fa'
 
+import CreateAccountDialog from './_components/create-account-dialog'
+import SignInDialog from './_components/sign-in-dialog'
+
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
@@ -13,12 +16,14 @@ const Page = () => {
       <div className='relative size-12 lg:size-96'>
         <Image
           fill
+          priority
           src='/icons/logo-light.svg'
           alt='logo'
           className='block dark:hidden'
         />
         <Image
           fill
+          priority
           src='/icons/logo-dark.svg'
           alt='logo'
           className='hidden dark:block'
@@ -54,7 +59,7 @@ const Page = () => {
             </div>
 
             {/* create account button */}
-            <Button className='w-full'>Create account</Button>
+            <CreateAccountDialog />
             <p className='text-foreground/70 mt-1 text-xs tracking-wide'>
               By signing up, you agree to the{' '}
               <Link
@@ -84,7 +89,7 @@ const Page = () => {
           {/* sign in button */}
           <div className='mt-10'>
             <h3 className='mb-4 text-xl font-bold'>Already have an account?</h3>
-            <Button className='w-full'>Sign in</Button>
+            <SignInDialog />
           </div>
         </div>
       </section>
