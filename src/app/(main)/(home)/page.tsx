@@ -1,9 +1,11 @@
 import Tweet from '@/components/shared/tweet'
 import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import TweetComposer from '@/components/shared/tweet-composer'
 
 const Page = () => {
-  return (
-    <div className='space-y-3 py-3'>
+  const tweets = (
+    <>
       <Tweet
         tweet={{
           id: '1',
@@ -55,6 +57,31 @@ const Page = () => {
         isBookmarked
         isUserVerified
       />
+    </>
+  )
+
+  return (
+    <div className='space-y-3'>
+      <Tabs defaultValue='For you'>
+        <TabsList className='sticky top-0'>
+          <TabsTrigger value='For you'>For you</TabsTrigger>
+          <TabsTrigger value='Following'>Following</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value='For you'>
+          {/* composer */}
+          <TweetComposer />
+          {/* feed */}
+          <section>{tweets}</section>
+        </TabsContent>
+
+        <TabsContent value='Following'>
+          {/* composer */}
+          <TweetComposer />
+          {/* feed */}
+          <section>{tweets}</section>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

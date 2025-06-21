@@ -24,7 +24,6 @@ type Props = {
 }
 
 const AuthDialog = ({ title, formSchema, children, type }: Props) => {
-  console.log()
   let defaultValues: FormData = {
     email: '',
     password: '',

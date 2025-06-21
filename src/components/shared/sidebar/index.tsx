@@ -7,13 +7,10 @@ type Props = {}
 
 const Sidebar = (props: Props) => {
   return (
-    <aside>
+    <aside className='space-y-3'>
       <Search />
-      <div className='space-y-3'>
-        <SubscribeCTA />
-        <TrendList />
-        <TrendList />
-      </div>
+      <SubscribeCTA />
+      <TrendList />
     </aside>
   )
 }

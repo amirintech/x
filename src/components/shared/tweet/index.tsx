@@ -93,7 +93,7 @@ const Tweet = ({
   )
 
   return (
-    <article className='mx-auto grid max-w-[560px] grid-cols-[auto_1fr] gap-2'>
+    <article className='mx-auto grid max-w-[570px] grid-cols-[auto_1fr] gap-2 p-3'>
       {/* user avatar */}
       <Avatar className='size-10'>
         <AvatarImage src={profilePicture} />
@@ -102,7 +102,7 @@ const Tweet = ({
 
       <section>
         {/* user info */}
-        <div className='flex items-center gap-1.5 text-[15px] font-medium text-slate-600'>
+        <div className='text-foreground/60 flex items-center gap-1.5 text-[15px] font-medium'>
           <div className='flex items-center gap-0.5'>
             <span className='text-foreground font-bold'>{name}</span>
             {isUserVerified && (

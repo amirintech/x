@@ -6,8 +6,8 @@ type Props = {}
 
 const Search = (props: Props) => {
   return (
-    <div className='bg-background sticky top-0 py-3'>
-      <div className='relative'>
+    <div className='bg-background sticky top-0 flex h-14 items-center justify-center'>
+      <div className='relative w-full'>
         <SearchIcon
           size={18}
           className='text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2'

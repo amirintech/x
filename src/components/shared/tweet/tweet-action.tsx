@@ -27,13 +27,11 @@ const TweetAction = ({ label, value, icon, onClick, isActive }: Props) => {
     views: 'group-hover:text-accent',
   }
 
-  console.log(isActive)
-
   return (
     <button
       onClick={onClick}
       className={cn(
-        'group flex cursor-pointer items-center text-slate-600',
+        'group text-foreground/60 flex cursor-pointer items-center',
         textMap[label.toLowerCase() as keyof typeof textMap],
       )}
     >

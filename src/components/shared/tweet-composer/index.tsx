@@ -32,7 +32,7 @@ const TweetComposer = (props: Props) => {
         <div>
           <Textarea
             placeholder='What is happening?'
-            className='caret-accent resize-none rounded-none border-none p-0 !text-xl shadow-none focus-visible:ring-0'
+            className='caret-accent resize-none rounded-none border-none !bg-transparent p-0 !text-xl shadow-none focus-visible:ring-0'
           />
 
           <div className='flex items-center justify-between'>
