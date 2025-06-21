@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 
 import Navbar from './_components/navbar'
+import TweetComposer from '@/components/shared/tweet-composer'
 
 type Props = {
   children: ReactNode
@@ -15,7 +16,10 @@ const Layout = ({ children }: Props) => {
       </div>
 
       {/* Main */}
-      <main className='w-full sm:border-x'>{children}</main>
+      <main className='w-full sm:border-x'>
+        <TweetComposer />
+        <section>{children}</section>
+      </main>
 
       {/* Sidebar */}
       <div className='hidden lg:block'>

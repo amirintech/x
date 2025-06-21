@@ -3,7 +3,7 @@ import { Separator } from '@/components/ui/separator'
 
 const Page = () => {
   return (
-    <div className='space-y-4 py-4'>
+    <div className='space-y-3 py-3'>
       <Tweet
         tweet={{
           id: '1',
