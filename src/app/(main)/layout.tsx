@@ -9,7 +9,7 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
   return (
-    <div className='flex items-center justify-center'>
+    <div className='flex justify-center'>
       <div className='flex w-full max-w-7xl min-w-fit'>
         {/* Navbar (Left Sidebar) */}
         <Navbar />
