@@ -7,7 +7,7 @@ import { GoHomeFill, GoHome, GoBell, GoBellFill, GoPerson, GoPersonFill } from '
 import { IoSearchOutline, IoSearch, IoMailOutline, IoMail, IoRose, IoRoseOutline } from 'react-icons/io5'
 import { FaFeatherPointed } from 'react-icons/fa6'
 
-import Logo from '../logo'
+import Logo from './logo'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
@@ -51,7 +51,7 @@ const Navbar = () => {
   )
 
   return (
-    <nav className='flex h-fit w-full items-center justify-between gap-2 p-2 sm:h-full sm:flex-col sm:justify-start xl:items-start'>
+    <nav className='flex h-fit w-full items-center justify-between gap-2 sm:h-full sm:flex-col sm:justify-start xl:items-start'>
       <Link
         href='/'
         className='mb-3 hidden sm:block xl:pl-2.5'

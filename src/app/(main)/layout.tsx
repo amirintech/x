@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 
 import Navbar from './_components/navbar'
 import TweetComposer from '@/components/shared/tweet-composer'
+import Sidebar from './_components/sidebar'
 
 type Props = {
   children: ReactNode
@@ -9,23 +10,23 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
   return (
-    <div className='grid h-screen w-full max-w-7xl grid-cols-1 grid-rows-[1fr_auto] sm:mx-auto sm:w-full sm:grid-cols-[60px_auto] sm:grid-rows-1 lg:grid-cols-[70px_600px_320px] lg:grid-rows-1 xl:grid-cols-[240px_600px_410px] xl:grid-rows-1'>
-      {/* Navbar */}
-      <div className='order-1 border-t sm:-order-1 sm:border-none'>
-        <Navbar />
-      </div>
+    <div className='flex items-center justify-center'>
+      <div className='flex w-full max-w-7xl min-w-fit px-4'>
+        {/* Navbar (Left Sidebar) */}
+        <div className='sticky top-0 hidden shrink-0 self-start p-3 sm:block sm:w-[60px] lg:w-[70px] xl:w-[240px]'>
+          <Navbar />
+        </div>
 
-      {/* Main */}
-      <main className='w-full sm:border-x'>
-        <TweetComposer />
-        <section>{children}</section>
-      </main>
+        {/* Main Content */}
+        <main className='w-full max-w-[590px] flex-1 border-x'>
+          <TweetComposer />
+          <section>{children}</section>
+        </main>
 
-      {/* Sidebar */}
-      <div className='hidden lg:block'>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis dignissimos earum vitae nihil temporibus quaerat
-        aspernatur corrupti debitis asperiores. Ea sed distinctio dolores laudantium quibusdam, possimus nemo iure
-        officiis? Eius.
+        {/* Sidebar (Right) */}
+        <div className='sticky top-0 hidden shrink-0 self-start p-3 pt-0 lg:block lg:w-[320px] xl:w-[410px]'>
+          <Sidebar />
+        </div>
       </div>
     </div>
   )

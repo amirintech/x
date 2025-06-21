@@ -23,7 +23,7 @@ export default function RootLayout({
       lang='en'
       suppressHydrationWarning
     >
-      <body className={`${font.className} antialiased`}>
+      <body className={`${font.className} h-screen w-screen antialiased`}>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
