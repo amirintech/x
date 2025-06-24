@@ -4,13 +4,22 @@ import { useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { GoHomeFill, GoHome, GoBell, GoBellFill, GoPerson, GoPersonFill } from 'react-icons/go'
-import { IoSearchOutline, IoSearch, IoMailOutline, IoMail, IoRose, IoRoseOutline } from 'react-icons/io5'
+import {
+  IoSearchOutline,
+  IoSearch,
+  IoMailOutline,
+  IoMail,
+  IoRose,
+  IoRoseOutline,
+  IoLogOutOutline,
+} from 'react-icons/io5'
 import { FaFeatherPointed } from 'react-icons/fa6'
 
 import Logo from './logo'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useNavbarScroll } from '@/hooks/useNavbarScroll'
+import { SignOutButton } from '@clerk/nextjs'
 
 const Navbar = () => {
   const pathname = usePathname()
@@ -47,6 +56,15 @@ const Navbar = () => {
         label: 'Profile',
         href: '/profile',
         icon: pathname === '/profile' ? <GoPersonFill size={iconSize} /> : <GoPerson size={iconSize} />,
+      },
+      {
+        label: 'Logout',
+        href: '#',
+        icon: (
+          <SignOutButton>
+            <IoLogOutOutline size={iconSize} />
+          </SignOutButton>
+        ),
       },
     ],
     [pathname],
