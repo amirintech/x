@@ -7,24 +7,27 @@ interface Props {
 }
 
 const Hero = ({
-  user: { username, name, postsCount, bio, location, joinedDate, website, followersCount, followingCount },
+  user: { username, name, bio, location, website, joinedDate, followersCount, followingCount, imageUrl, bannerUrl },
 }: Props) => {
   return (
     <section>
       {/* banner & profile image */}
       <div className='relative'>
         <div className='relative h-40 w-full sm:h-56'>
-          <Image
-            src='https://images.unsplash.com/photo-1749838065282-32db54bed154?q=80&w=2729&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-            alt='Profile'
-            fill
-            className='object-cover'
-          />
+          {bannerUrl && (
+            <Image
+              src={bannerUrl}
+              alt='Profile'
+              fill
+              className='object-cover'
+            />
+          )}
+          {!bannerUrl && <div className='size-full bg-gradient-to-br from-violet-300 to-sky-300' />}
         </div>
         <div className='absolute bottom-0 left-3 translate-y-1/2'>
           <div className='border-background relative size-32 overflow-hidden rounded-full border-4'>
             <Image
-              src='https://images.unsplash.com/photo-1580638511809-d3200a16c355?q=80&w=1812&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+              src={imageUrl || '/images/default-profile.png'}
               alt='Profile'
               fill
               className='object-cover'
@@ -46,26 +49,30 @@ const Hero = ({
 
         {/* other info */}
         <div className='flex flex-wrap items-center gap-x-3 gap-y-1'>
-          <div className='text-foreground/60 flex items-center gap-1'>
-            <MapPinIcon className='size-4' />
-            <span>{location}</span>
-          </div>
+          {location && (
+            <div className='text-foreground/60 flex items-center gap-1'>
+              <MapPinIcon className='size-4' />
+              <span>{location}</span>
+            </div>
+          )}
 
           <div className='text-foreground/60 flex items-center gap-1'>
             <CalendarIcon className='size-4' />
             <span>Joined {joinedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
           </div>
 
-          <div className='text-foreground/60 flex items-center gap-1'>
-            <LinkIcon className='size-4' />
-            <a
-              target='_blank'
-              href={website}
-              className='text-accent hover:underline'
-            >
-              {website}
-            </a>
-          </div>
+          {website && (
+            <div className='text-foreground/60 flex items-center gap-1'>
+              <LinkIcon className='size-4' />
+              <a
+                target='_blank'
+                href={website}
+                className='text-accent hover:underline'
+              >
+                {website}
+              </a>
+            </div>
+          )}
         </div>
 
         {/* following & followers */}

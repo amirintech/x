@@ -11,7 +11,9 @@ declare global {
 }
 
 if (!global._neo4jDriver)
-  global._neo4jDriver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD))
+  global._neo4jDriver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD), {
+    disableLosslessIntegers: true,
+  })
 
 driver = global._neo4jDriver
 

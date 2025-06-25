@@ -1,4 +1,5 @@
 export type User = {
+  id: string
   username: string
   name: string
   bio?: string
@@ -8,4 +9,6 @@ export type User = {
   followersCount: number
   followingCount: number
   postsCount: number
+  imageUrl?: string
+  bannerUrl?: string
 }

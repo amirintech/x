@@ -2,19 +2,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Hero from './_components/hero'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftIcon } from 'lucide-react'
+import { getCurrentUser } from '@/lib/user'
+import { notFound } from 'next/navigation'
 
-const Page = () => {
-  const user = {
-    username: 'john_doe',
-    name: 'John Doe',
-    postsCount: 100,
-    bio: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
-    location: 'New York, NY',
-    joinedDate: new Date('2025-06-21'),
-    website: 'https://www.john-doe.com',
-    followersCount: 100,
-    followingCount: 100,
-  }
+const Page = async () => {
+  const user = await getCurrentUser()
+  if (!user) return notFound()
 
   return (
     <div>

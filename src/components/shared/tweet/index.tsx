@@ -1,56 +1,103 @@
 'use client'
 
-import { useMemo } from 'react'
+import axios from 'axios'
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { HiCheckBadge } from 'react-icons/hi2'
-
-import TweetAction from './tweet-action'
-import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
-
-import type { Tweet } from '@/types/tweet'
 import { Repeat2Icon, ShareIcon } from 'lucide-react'
 import { GoBookmark, GoBookmarkFill, GoHeart, GoHeartFill } from 'react-icons/go'
 import { LuChartNoAxesColumn } from 'react-icons/lu'
 import { IoChatbubbleOutline } from 'react-icons/io5'
 
+import TweetAction from './tweet-action'
+import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
+
+import type { Tweet } from '@/types/tweet'
+import { toast } from 'sonner'
+
 type Props = {
-  tweet: Tweet
-  name: string
-  profilePicture: string
-  username: string
-  isRetweeted: boolean
+  createdAt: string
+  replies: number
+  mediaSrcs: string[]
+  id: string
+  retweets: number
+  views: number
+  content: string
+  likes: number
+  updatedAt: string
+  tags: string[]
+  author: {
+    id: string
+    isVerified: boolean | null
+    username: string
+    imageUrl: string | null
+    name: string | null
+  }
   isLiked: boolean
+  isRetweeted: boolean
   isBookmarked: boolean
-  isUserVerified: boolean
 }
 
 const Tweet = ({
-  tweet: { content, createdAt, likes, retweets, replies, views, mediaSrcs },
-  name,
-  profilePicture,
-  username,
+  id,
+  content,
+  createdAt,
+  likes,
+  retweets,
+  replies,
+  views,
+  mediaSrcs,
+  author,
   isRetweeted,
   isLiked,
   isBookmarked,
-  isUserVerified,
 }: Props) => {
+  const [retweeted, setRetweeted] = useState(isRetweeted)
+  const [retweetsCount, setRetweetsCount] = useState(retweets)
+  const [liked, setLiked] = useState(isLiked)
+  const [likesCount, setLikesCount] = useState(likes)
+  const [bookmarked, setBookmarked] = useState(isBookmarked)
+  const [isLoading, setIsLoading] = useState(false)
+
   const actions = useMemo(
     () => [
       {
         label: 'Replies',
         value: replies,
         icon: <IoChatbubbleOutline size={16} />,
+        onClick: () => console.log('replies'),
       },
       {
         label: 'Retweet',
-        value: retweets,
+        value: retweetsCount,
         icon: <Repeat2Icon size={18} />,
-        isActive: isRetweeted,
+        isActive: retweeted,
+        disabled: isLoading,
+        onClick: async () => {
+          if (isLoading) return
+          setIsLoading(true)
+          const previousRetweeted = retweeted
+          const previousCount = retweetsCount
+
+          setRetweeted(!retweeted)
+          setRetweetsCount(retweeted ? retweetsCount - 1 : retweetsCount + 1)
+
+          try {
+            if (retweeted) await axios.delete(`/api/tweet/${id}/retweet`, { data: { userId: author.id } })
+            else await axios.post(`/api/tweet/${id}/retweet`, { userId: author.id })
+          } catch (error) {
+            toast.error('Failed to perform action')
+            setRetweeted(previousRetweeted)
+            setRetweetsCount(previousCount)
+          } finally {
+            setIsLoading(false)
+          }
+        },
       },
       {
         label: 'Like',
-        value: likes,
-        icon: isLiked ? (
+        value: likesCount,
+        icon: liked ? (
           <GoHeartFill
             size={16}
             className='stroke-[0.5px]'
@@ -61,16 +108,41 @@ const Tweet = ({
             className='stroke-[0.5px]'
           />
         ),
-        isActive: true,
+        isActive: liked,
+        disabled: isLoading,
+        onClick: async () => {
+          if (isLoading) return
+          setIsLoading(true)
+          const previousLiked = liked
+          const previousCount = likesCount
+
+          setLiked(!liked)
+          setLikesCount(liked ? likesCount - 1 : likesCount + 1)
+
+          try {
+            if (liked) {
+              await axios.delete(`/api/tweet/${id}/like`, { data: { userId: author.id } })
+            } else {
+              await axios.post(`/api/tweet/${id}/like`, { userId: author.id })
+            }
+          } catch (error) {
+            toast.error('Failed to perform action')
+            setLiked(previousLiked)
+            setLikesCount(previousCount)
+          } finally {
+            setIsLoading(false)
+          }
+        },
       },
       {
         label: 'Views',
         value: views,
         icon: <LuChartNoAxesColumn size={16} />,
+        onClick: () => console.log('views'),
       },
       {
         label: 'Bookmark',
-        icon: isBookmarked ? (
+        icon: bookmarked ? (
           <GoBookmarkFill
             size={16}
             className='stroke-[0.5px]'
@@ -81,38 +153,57 @@ const Tweet = ({
             className='stroke-[0.5px]'
           />
         ),
-        isActive: isBookmarked,
+        isActive: bookmarked,
+        disabled: isLoading,
+        onClick: async () => {
+          if (isLoading) return
+          setIsLoading(true)
+          const previousBookmarked = bookmarked
+
+          setBookmarked(!bookmarked)
+
+          try {
+            if (bookmarked) await axios.delete(`/api/tweet/${id}/bookmark`, { data: { userId: author.id } })
+            else await axios.post(`/api/tweet/${id}/bookmark`, { userId: author.id })
+          } catch (error) {
+            toast.error('Failed to perform action')
+            setBookmarked(previousBookmarked)
+          } finally {
+            setIsLoading(false)
+          }
+        },
       },
       {
         label: 'Share',
         value: 0,
         icon: <ShareIcon size={15} />,
+        onClick: () => console.log('share'),
       },
     ],
-    [],
+    [replies, retweetsCount, likesCount, views, retweeted, liked, bookmarked, isLoading],
   )
 
   return (
     <article className='mx-auto grid max-w-[570px] grid-cols-[auto_1fr] gap-2 p-3'>
       {/* user avatar */}
       <Avatar className='size-10'>
-        <AvatarImage src={profilePicture} />
-        <AvatarFallback>{name}</AvatarFallback>
+        <AvatarImage src={author.imageUrl || '/images/default-profile.png'} />
+        <AvatarFallback>{author.name || author.username}</AvatarFallback>
       </Avatar>
 
       <section>
         {/* user info */}
         <div className='text-foreground/60 flex items-center gap-1.5 text-[15px] font-medium'>
           <div className='flex items-center gap-0.5'>
-            <span className='text-foreground font-bold'>{name}</span>
-            {isUserVerified && (
+            <span className='text-foreground font-bold'>{author.name || author.username}</span>
+            {author.isVerified && (
               <HiCheckBadge
                 size={20}
                 className='text-accent'
               />
             )}
           </div>
-          <span>@{username}</span>
+          <span>@{author.username}</span>
           <span>&bull;</span>
           <span>{getTimeAgo(createdAt)}</span>
         </div>
@@ -139,7 +230,6 @@ const Tweet = ({
               <TweetAction
                 key={action.label}
                 {...action}
-                onClick={() => console.log(action.label)}
               />
             ))}
           </div>
@@ -148,7 +238,6 @@ const Tweet = ({
               <TweetAction
                 key={action.label}
                 {...action}
-                onClick={() => console.log(action.label)}
               />
             ))}
           </div>
@@ -160,7 +249,8 @@ const Tweet = ({
 
 export default Tweet
 
-function getTimeAgo(date: Date) {
+function getTimeAgo(dateString: string) {
+  const date = new Date(dateString)
   const now = new Date()
   const diff = (now.getTime() - date.getTime()) / 1000 // seconds
   if (diff < 60) return `${Math.floor(diff)}s`

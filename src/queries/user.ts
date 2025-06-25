@@ -15,7 +15,8 @@ export async function createUser({ id, username }: CreateUserInput) {
         username: $username,
         followersCount: 0,
         followingCount: 0,
-        postsCount: 0
+        postsCount: 0,
+        isVerified: false
       })
       RETURN u
       `,
@@ -74,6 +75,42 @@ export async function deleteUser(id: string) {
       `,
       { id },
     )
+  } finally {
+    await session.close()
+  }
+}
+
+export type GetUserInput = {
+  id?: string
+  username?: string
+}
+
+export type GetUserOutput = {
+  id: string
+  username: string
+  followersCount: number
+  followingCount: number
+  postsCount: number
+  bio?: string
+  location?: string
+  website?: string
+  imageUrl?: string
+  bannerUrl?: string
+}
+
+export async function getUser({ id, username }: GetUserInput): Promise<GetUserOutput | null> {
+  if (!id && !username) return null
+  const session = driver.session()
+  try {
+    const result = await session.run(
+      `
+      MATCH (u:User ${id ? '{ id: $id }' : '{ username: $username }'})
+      RETURN u
+      `,
+      id ? { id } : { username },
+    )
+    const record = result.records[0]
+    return record ? record.get('u').properties : null
   } finally {
     await session.close()
   }

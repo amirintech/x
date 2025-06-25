@@ -17,8 +17,6 @@ export async function POST(req: NextRequest) {
         id,
         username: parsedUser.username,
       })
-
-      redirect('/')
     }
 
     if (evt.type === 'user.updated') {

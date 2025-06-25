@@ -6,9 +6,10 @@ type Props = {
   icon: React.ReactNode
   onClick: () => void
   isActive?: boolean
+  disabled?: boolean
 }
 
-const TweetAction = ({ label, value, icon, onClick, isActive }: Props) => {
+const TweetAction = ({ label, value, icon, onClick, isActive, disabled }: Props) => {
   const themesMap = {
     replies: 'group-hover:text-accent',
     retweet: 'group-hover:text-emerald-500' + (isActive ? ' text-emerald-500' : ''),
@@ -30,15 +31,18 @@ const TweetAction = ({ label, value, icon, onClick, isActive }: Props) => {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         'group text-foreground/60 flex cursor-pointer items-center',
         textMap[label.toLowerCase() as keyof typeof textMap],
+        disabled && 'cursor-not-allowed opacity-50',
       )}
     >
       <div
         className={cn(
           'relative z-10 w-full rounded-full before:absolute before:inset-0 before:-z-10 before:h-full before:scale-200 before:rounded-full group-hover:before:bg-current/10',
           themesMap[label.toLowerCase() as keyof typeof themesMap],
+          disabled && 'group-hover:before:bg-transparent',
         )}
       >
         {icon}
