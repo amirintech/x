@@ -5,25 +5,34 @@ import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
 import { CalendarClockIcon, ImageIcon, MapPinIcon, VoteIcon } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
+import { genUploader } from 'uploadthing/client'
 
 import ComposerAction from './composer-action'
+import FileUploader from './file-uploader'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { renameFile } from '@/lib/files'
 
 const TweetComposer = () => {
   const [content, setContent] = useState('')
-  const [mediaSrcs, setMediaSrcs] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [showFileUploader, setShowFileUploader] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
+
   const actions = useMemo(
     () => [
-      { label: 'Media', icon: <ImageIcon size={18} />, onClick: () => console.log('media') },
-      { label: 'Poll', icon: <VoteIcon size={18} />, onClick: () => console.log('poll') },
-      { label: 'Schedule', icon: <CalendarClockIcon size={18} />, onClick: () => console.log('schedule') },
-      { label: 'Location', icon: <MapPinIcon size={18} />, onClick: () => console.log('location') },
+      {
+        label: 'Media',
+        icon: <ImageIcon size={18} />,
+        onClick: () => setShowFileUploader(!showFileUploader),
+      },
+      { label: 'Poll', icon: <VoteIcon size={18} />, onClick: () => {} },
+      { label: 'Schedule', icon: <CalendarClockIcon size={18} />, onClick: () => {} },
+      { label: 'Location', icon: <MapPinIcon size={18} />, onClick: () => {} },
     ],
-    [],
+    [showFileUploader],
   )
 
   const { user } = useUser()
@@ -33,13 +42,17 @@ const TweetComposer = () => {
     e.preventDefault()
     setIsLoading(true)
     try {
-      await axios.post('/api/tweet', {
-        userId: user.id,
-        content: content.trim(),
-        mediaSrcs,
-      })
-      setContent('')
-      setMediaSrcs([])
+      const mediaSrcs: string[] = []
+      if (file) {
+        const renamedFile = renameFile(file, `${user.id}-${Date.now()}.${file.type.split('/')[1]}`)
+        const fileResult = await genUploader().uploadFiles('profileImageUploader', {
+          files: [renamedFile],
+          onUploadProgress: () => {},
+          onUploadBegin: () => {},
+        })
+        mediaSrcs.push(fileResult[0].ufsUrl)
+      }
+      await createTweet(mediaSrcs)
     } catch (error) {
       console.error(error)
       toast.error('Failed to create tweet')
@@ -47,6 +60,32 @@ const TweetComposer = () => {
       setIsLoading(false)
     }
   }
+
+  const createTweet = async (mediaSrcs: string[]) => {
+    setIsLoading(true)
+    try {
+      await axios.post('/api/tweet', {
+        userId: user.id,
+        content: content.trim(),
+        mediaSrcs,
+      })
+      setContent('')
+      setFile(null)
+      setShowFileUploader(false)
+      toast.success('Tweet posted successfully!')
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to create tweet')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleFilesChange = (newFile: File | null) => {
+    setFile(newFile)
+  }
+
+  const isSubmitDisabled = isLoading || (!content.trim() && file === null)
 
   return (
     <div className='border-b p-3'>
@@ -65,6 +104,17 @@ const TweetComposer = () => {
             disabled={isLoading}
           />
 
+          {/* File Uploader */}
+          {showFileUploader && (
+            <div className='mt-4 mb-4'>
+              <FileUploader
+                file={file}
+                onFilesChange={handleFilesChange}
+                isDisabled={isLoading}
+              />
+            </div>
+          )}
+
           <div className='flex items-center justify-between'>
             {/* compose actions */}
             <div className='flex items-center gap-4'>
@@ -78,7 +128,7 @@ const TweetComposer = () => {
 
             {/* tweet button */}
             <Button
-              disabled={isLoading}
+              disabled={isSubmitDisabled}
               size='sm'
             >
               {isLoading ? 'Tweeting...' : 'Tweet'}

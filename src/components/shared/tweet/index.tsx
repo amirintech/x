@@ -65,7 +65,7 @@ const Tweet = ({
         label: 'Replies',
         value: replies,
         icon: <IoChatbubbleOutline size={16} />,
-        onClick: () => console.log('replies'),
+        onClick: () => {},
       },
       {
         label: 'Retweet',
@@ -138,7 +138,7 @@ const Tweet = ({
         label: 'Views',
         value: views,
         icon: <LuChartNoAxesColumn size={16} />,
-        onClick: () => console.log('views'),
+        onClick: () => {},
       },
       {
         label: 'Bookmark',
@@ -177,7 +177,7 @@ const Tweet = ({
         label: 'Share',
         value: 0,
         icon: <ShareIcon size={15} />,
-        onClick: () => console.log('share'),
+        onClick: () => {},
       },
     ],
     [replies, retweetsCount, likesCount, views, retweeted, liked, bookmarked, isLoading],
@@ -217,7 +217,7 @@ const Tweet = ({
                 src={mediaSrcs[0]}
                 alt='tweet media'
                 fill
-                className='rounded-lg'
+                className='rounded-lg object-cover'
               />
             </div>
           )}

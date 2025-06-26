@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams
-    console.log('searchParams', searchParams)
     const userId = searchParams.get('userId')
     const limit = parseInt(searchParams.get('limit') || '10', 10)
     const skip = parseInt(searchParams.get('skip') || '0', 10)

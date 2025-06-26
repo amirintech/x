@@ -43,7 +43,7 @@ const AuthDialog = ({ title, formSchema, children, type }: Props) => {
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+    // console.log(values)
   }
 
   const handleOpenChange = (open: boolean) => {

@@ -10,6 +10,7 @@ type Props = {
 const ComposerAction = ({ label, icon, onClick }: Props) => {
   return (
     <button
+      type='button'
       onClick={onClick}
       className='hover:before:bg-accent/10 relative cursor-pointer before:absolute before:inset-0 before:scale-200 before:rounded-full'
     >
