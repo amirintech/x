@@ -29,6 +29,7 @@ export default function RootLayout({
       <html
         lang='en'
         suppressHydrationWarning
+        className='scrollbar scrollbar-thumb-accent scrollbar-track-accent/10'
       >
         <body className={`${font.className} h-screen w-screen antialiased`}>
           <ThemeProvider

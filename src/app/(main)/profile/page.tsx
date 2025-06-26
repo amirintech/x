@@ -12,7 +12,7 @@ const Page = async () => {
   return (
     <div>
       {/* header */}
-      <header className='bg-background/70 sticky top-0 z-[60] flex items-center gap-6 border-b px-3 py-2 backdrop-blur-3xl'>
+      <header className='bg-background/70 sticky top-0 z-10 flex items-center gap-6 border-b px-3 py-2 backdrop-blur-3xl'>
         <Button
           variant='ghost'
           size='icon'

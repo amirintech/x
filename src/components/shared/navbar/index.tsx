@@ -51,6 +51,7 @@ const Navbar = () => {
         label: 'Grok',
         href: '/grok',
         icon: pathname === '/grok' ? <IoRose size={iconSize} /> : <IoRoseOutline size={iconSize} />,
+        desktopOnly: true,
       },
       {
         label: 'Profile',
@@ -65,6 +66,7 @@ const Navbar = () => {
             <IoLogOutOutline size={iconSize} />
           </SignOutButton>
         ),
+        desktopOnly: true,
       },
     ],
     [pathname],
@@ -91,7 +93,10 @@ const Navbar = () => {
           <Link
             key={route.href}
             href={route.href}
-            className='hover:bg-foreground/10 flex size-fit items-center justify-center rounded-full p-3 xl:w-fit xl:justify-start xl:gap-3 xl:pr-6'
+            className={cn(
+              'hover:bg-foreground/10 flex size-fit items-center justify-center rounded-full p-3 xl:w-fit xl:justify-start xl:gap-3 xl:pr-6',
+              route.desktopOnly && 'hidden sm:flex',
+            )}
           >
             {route.icon}
             <span className={cn('sr-only text-lg font-medium xl:not-sr-only', pathname === route.href && 'font-bold')}>
