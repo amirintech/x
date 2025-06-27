@@ -57,7 +57,7 @@ type Props = {}
 
 const TrendList = (props: Props) => {
   return (
-    <div className='rounded-xl border'>
+    <div className='overflow-hidden rounded-xl border'>
       <h2 className='p-3 text-xl font-extrabold'>What&apos;s happening</h2>
       <div className='space-y-3'>
         {trends.map((trend) => (

@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { renameFile } from '@/lib/files'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const TweetComposer = () => {
   const [content, setContent] = useState('')
@@ -36,7 +37,30 @@ const TweetComposer = () => {
   )
 
   const { user } = useUser()
-  if (!user) return null
+  if (!user)
+    return (
+      <div className='min-h-[132px] w-full p-3'>
+        <div className='mx-auto flex max-w-[560px] gap-2'>
+          {/* avatar */}
+          <Skeleton className='!size-10 !rounded-full' />
+          <div className='w-full space-y-3'>
+            {/* textarea */}
+            <Skeleton className='h-16 w-full' />
+            <div className='flex items-center justify-between'>
+              {/* compose actions */}
+              <div className='flex items-center gap-4'>
+                <Skeleton className='size-5 rounded' />
+                <Skeleton className='size-5 rounded' />
+                <Skeleton className='size-5 rounded' />
+                <Skeleton className='size-5 rounded' />
+              </div>
+              {/* tweet button */}
+              <Skeleton className='h-8 w-14 rounded-full' />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -88,14 +112,17 @@ const TweetComposer = () => {
   const isSubmitDisabled = isLoading || (!content.trim() && file === null)
 
   return (
-    <div className='border-b p-3'>
+    <div className='min-h-[132px] w-full p-3'>
       <div className='mx-auto grid max-w-[560px] grid-cols-[auto_1fr] gap-2'>
         <Avatar className='size-10'>
           <AvatarImage src={user.imageUrl || '/images/default-profile.png'} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className='space-y-3'
+        >
           <Textarea
             placeholder='What is happening?'
             className='caret-accent resize-none rounded-none border-none !bg-transparent p-0 !text-xl shadow-none focus-visible:ring-0'
@@ -106,7 +133,7 @@ const TweetComposer = () => {
 
           {/* File Uploader */}
           {showFileUploader && (
-            <div className='mt-4 mb-4'>
+            <div>
               <FileUploader
                 file={file}
                 onFilesChange={handleFilesChange}

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+
 import Tweet from '@/components/shared/tweet'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -35,6 +36,7 @@ const Page = async () => {
         <TabsContent value='For you'>
           {/* composer */}
           <TweetComposer />
+          <Separator />
           {/* feed */}
           <section>{tweets}</section>
         </TabsContent>
@@ -42,6 +44,7 @@ const Page = async () => {
         <TabsContent value='Following'>
           {/* composer */}
           <TweetComposer />
+          <Separator />
           {/* feed */}
           <section>{tweets}</section>
         </TabsContent>
