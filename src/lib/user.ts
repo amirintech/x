@@ -6,14 +6,14 @@ export async function getCurrentUser(): Promise<User | null> {
   const clerkUser = await currentUser()
   if (!clerkUser) return null
 
-  const userData = await getUser({ id: clerkUser.id })
+  const userData = await getUser({ id: clerkUser.id, requesterId: clerkUser.id })
   if (!userData) return null
 
   return {
     id: userData.id,
     username: userData.username,
-    name: clerkUser.fullName || (clerkUser.firstName + ' ' + clerkUser.lastName).trim(),
-    joinedDate: new Date(clerkUser.createdAt),
+    name: userData.name,
+    joinedDate: userData.joinedDate,
     bio: userData.bio,
     location: userData.location,
     website: userData.website,
@@ -21,6 +21,8 @@ export async function getCurrentUser(): Promise<User | null> {
     followingCount: userData.followingCount,
     postsCount: userData.postsCount,
     imageUrl: userData.imageUrl,
+    bannerUrl: userData.bannerUrl,
+    isVerified: userData.isVerified,
   }
 }
 

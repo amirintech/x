@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
 
 // GET: Get tweets by user with pagination
 export async function GET(req: NextRequest) {
+  console.log('API GET: ', req.nextUrl.searchParams)
   try {
+    console.log('API GET: ', req.nextUrl.searchParams)
     const searchParams = req.nextUrl.searchParams
     const userId = searchParams.get('userId')
     const limit = parseInt(searchParams.get('limit') || '10', 10)
@@ -26,7 +28,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 })
     }
     const tweets = await getTweetsByUser({ userId, limit, skip })
-    return NextResponse.json({ tweets })
+    console.log('API GET: ', tweets)
+    return NextResponse.json({ tweets }, { status: 200 })
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 400 })
   }

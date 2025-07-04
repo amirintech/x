@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import Image from 'next/image'
 
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { User } from '@/types/user'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import Input from '@/components/shared/input'
 import { Button } from '@/components/ui/button'
-type Props = { children: React.ReactNode; user: User }
+import { GetUserOutput } from '@/queries/user'
+
+type Props = { children: React.ReactNode; user: GetUserOutput }
 
 const ProfileUpdateDialog = ({ children, user }: Props) => {
   const { bannerUrl, imageUrl } = user

@@ -184,7 +184,7 @@ const Tweet = ({
   )
 
   return (
-    <article className='mx-auto grid max-w-[570px] grid-cols-[auto_1fr] gap-2 p-3'>
+    <article className='mx-auto grid grid-cols-[auto_1fr] gap-2 p-3'>
       {/* user avatar */}
       <Avatar className='size-10'>
         <AvatarImage src={author.imageUrl || '/images/default-profile.png'} />
@@ -205,7 +205,7 @@ const Tweet = ({
           </div>
           <span>@{author.username}</span>
           <span>&bull;</span>
-          <span>{getTimeAgo(createdAt)}</span>
+          <span suppressHydrationWarning>{getTimeAgo(createdAt)}</span>
         </div>
 
         {/* tweet content */}

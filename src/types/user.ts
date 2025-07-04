@@ -4,11 +4,12 @@ export type User = {
   name: string
   bio?: string
   location?: string
-  joinedDate: Date
+  joinedDate: string
   website?: string
   followersCount: number
   followingCount: number
   postsCount: number
   imageUrl?: string
   bannerUrl?: string
+  isVerified: boolean
 }

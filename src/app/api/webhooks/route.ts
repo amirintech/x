@@ -9,13 +9,15 @@ export async function POST(req: NextRequest) {
     const evt = await verifyWebhook(req)
 
     if (evt.type === 'user.created') {
-      const { id, username } = evt.data
+      const { id, username, first_name, last_name, created_at } = evt.data
       const parsedUser = upsertUserSchema.parse({
         username: username!,
       })
       await createUser({
         id,
         username: parsedUser.username,
+        name: `${first_name} ${last_name}`.trim(),
+        joinedDate: new Date(created_at).toISOString(),
       })
     }
 

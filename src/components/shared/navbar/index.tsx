@@ -19,9 +19,10 @@ import Logo from './logo'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useNavbarScroll } from '@/hooks/useNavbarScroll'
-import { SignOutButton } from '@clerk/nextjs'
+import { SignOutButton, useUser } from '@clerk/nextjs'
 
 const Navbar = () => {
+  const currentUser = useUser()
   const pathname = usePathname()
   const { isNavbarVisible } = useNavbarScroll()
   const iconSize = 26
@@ -55,7 +56,7 @@ const Navbar = () => {
       },
       {
         label: 'Profile',
-        href: '/profile',
+        href: currentUser.isSignedIn ? `/profile/${currentUser.user.username}` : '',
         icon: pathname === '/profile' ? <GoPersonFill size={iconSize} /> : <GoPerson size={iconSize} />,
       },
       {

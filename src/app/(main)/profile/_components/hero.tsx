@@ -1,14 +1,21 @@
+'use client'
+
 import Image from 'next/image'
 import { CalendarIcon, LinkIcon, MapPinIcon } from 'lucide-react'
-import { User } from '@/types/user'
-import { Button } from '@/components/ui/button'
+
 import ProfileUpdateDialog from './profile-update-dialog'
 
+import { Button } from '@/components/ui/button'
+import { followUser, GetUserOutput } from '@/queries/user'
+import FollowButton from './follow-button'
+
 interface Props {
-  user: User
+  user: GetUserOutput
+  isCurrentUser: boolean
+  currentUser: GetUserOutput
 }
 
-const Hero = ({ user }: Props) => {
+const Hero = ({ user, isCurrentUser, currentUser }: Props) => {
   const { username, name, bio, location, website, joinedDate, followersCount, followingCount, imageUrl, bannerUrl } =
     user
 
@@ -40,14 +47,25 @@ const Hero = ({ user }: Props) => {
       </div>
 
       <div className='relative'>
-        <ProfileUpdateDialog user={user}>
-          <Button
-            variant='secondary'
-            className='absolute top-3 right-3'
-          >
-            Edit profile
-          </Button>
-        </ProfileUpdateDialog>
+        {/* edit profile button */}
+        {isCurrentUser && (
+          <ProfileUpdateDialog user={user}>
+            <Button
+              variant='secondary'
+              className='absolute top-3 right-3'
+            >
+              Edit profile
+            </Button>
+          </ProfileUpdateDialog>
+        )}
+
+        {/* follow button */}
+        {!isCurrentUser && (
+          <FollowButton
+            user={user}
+            currentUser={currentUser}
+          />
+        )}
 
         {/* profile info */}
         <div className='space-y-3 px-3 pt-[72px] text-sm'>
@@ -71,7 +89,7 @@ const Hero = ({ user }: Props) => {
 
             <div className='text-foreground/60 flex items-center gap-1'>
               <CalendarIcon className='size-4' />
-              <span>Joined {joinedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+              <span>Joined {new Date(joinedDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
             </div>
 
             {website && (
