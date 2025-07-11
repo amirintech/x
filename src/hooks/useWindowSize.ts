@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface WindowSize {
   width: number
@@ -6,20 +6,21 @@ interface WindowSize {
 }
 
 export function useWindowSize(): WindowSize {
-  const [windowSize, setWindowSize] = useState<WindowSize>({
+  const windowSizeRef = useRef<WindowSize>({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
     height: typeof window !== 'undefined' ? window.innerHeight : 0,
   })
 
   useEffect(() => {
-    // Only run on client sid
+    // Only run on client side
     if (typeof window === 'undefined') return
 
     function handleResize() {
-      setWindowSize({
+      const newSize = {
         width: window.innerWidth,
         height: window.innerHeight,
-      })
+      }
+      windowSizeRef.current = newSize
     }
 
     // Set initial size
@@ -32,5 +33,5 @@ export function useWindowSize(): WindowSize {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  return windowSize
+  return windowSizeRef.current
 }
