@@ -4,8 +4,8 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
 import { CalendarClockIcon, ImageIcon, MapPinIcon, VoteIcon } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
 import { genUploader } from 'uploadthing/client'
+import { useQuery } from '@tanstack/react-query'
 
 import ComposerAction from './composer-action'
 import FileUploader from './file-uploader'
@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { renameFile } from '@/lib/files'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getCurrentUser } from '@/lib/user'
 
 const TweetComposer = () => {
   const [content, setContent] = useState('')
@@ -36,13 +37,21 @@ const TweetComposer = () => {
     [showFileUploader],
   )
 
-  const { user } = useUser()
-  if (!user)
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    status,
+  } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: getCurrentUser,
+  })
+
+  if (isUserLoading || status === 'pending')
     return (
       <div className='min-h-[132px] w-full p-3'>
         <div className='mx-auto flex max-w-[560px] gap-2'>
           {/* avatar */}
-          <Skeleton className='!size-10 !rounded-full' />
+          <Skeleton className='!size-10 shrink-0 !rounded-full' />
           <div className='w-full space-y-3'>
             {/* textarea */}
             <Skeleton className='h-16 w-full' />
@@ -61,6 +70,8 @@ const TweetComposer = () => {
         </div>
       </div>
     )
+
+  if (!user) return null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

@@ -14,18 +14,37 @@ import {
   IoLogOutOutline,
 } from 'react-icons/io5'
 import { FaFeatherPointed } from 'react-icons/fa6'
+import { toast } from 'sonner'
 
 import Logo from './logo'
+
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useNavbarScroll } from '@/hooks/useNavbarScroll'
-import { SignOutButton, useUser } from '@clerk/nextjs'
+import { getCurrentUser } from '@/lib/user'
+import { useQuery } from '@tanstack/react-query'
 
 const Navbar = () => {
-  const currentUser = useUser()
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: getCurrentUser,
+  })
   const pathname = usePathname()
   const { isNavbarVisible } = useNavbarScroll()
   const iconSize = 26
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      if (!res.ok) throw new Error('Failed to logout')
+      window.location.reload()
+    } catch (error) {
+      toast.error('Failed to logout')
+    }
+  }
+
   const routes = useMemo(
     () => [
       {
@@ -56,21 +75,11 @@ const Navbar = () => {
       },
       {
         label: 'Profile',
-        href: currentUser.isSignedIn ? `/profile/${currentUser.user.username}` : '',
+        href: currentUser ? `/profile/${currentUser.username}` : '/profile',
         icon: pathname === '/profile' ? <GoPersonFill size={iconSize} /> : <GoPerson size={iconSize} />,
       },
-      {
-        label: 'Logout',
-        href: '#',
-        icon: (
-          <SignOutButton>
-            <IoLogOutOutline size={iconSize} />
-          </SignOutButton>
-        ),
-        desktopOnly: true,
-      },
     ],
-    [pathname],
+    [pathname, currentUser],
   )
 
   return (
@@ -92,7 +101,7 @@ const Navbar = () => {
         </Link>
         {routes.map((route) => (
           <Link
-            key={route.href}
+            key={route.label}
             href={route.href}
             className={cn(
               'hover:bg-foreground/10 flex size-fit items-center justify-center rounded-full p-3 xl:w-fit xl:justify-start xl:gap-3 xl:pr-6',
@@ -105,6 +114,16 @@ const Navbar = () => {
             </span>
           </Link>
         ))}
+
+        <button
+          onClick={handleLogout}
+          className={`hover:bg-foreground/10 hidden size-fit cursor-pointer items-center justify-center rounded-full p-3 sm:flex xl:w-fit xl:justify-start xl:gap-3 xl:pr-6`}
+        >
+          <IoLogOutOutline size={iconSize} />
+          <span className={cn('sr-only text-lg font-medium xl:not-sr-only', pathname === '/logout' && 'font-bold')}>
+            Logout
+          </span>
+        </button>
 
         <Button
           size='lg'

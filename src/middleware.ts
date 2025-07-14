@@ -1,26 +1,36 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { jwtVerify } from 'jose'
 
-const isPublicRoute = createRouteMatcher(['/auth', '/api/webhooks(.*)', '/api/uploadthing(.*)'])
+const PUBLIC_ROUTES = ['/auth', '/api/uploadthing']
 
-export default clerkMiddleware(async (auth, req) => {
-  const { isAuthenticated } = await auth()
+function isPublicRoute(pathname: string) {
+  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
+}
 
-  // Redirect to home page if user is authenticated and on auth page
-  if (isAuthenticated && req.nextUrl.pathname === '/auth') return NextResponse.redirect(new URL('/', req.url))
+const JWT_SECRET = process.env.JWT_SECRET!
 
-  // Allow access to public routes
-  if (isAuthenticated || isPublicRoute(req)) return NextResponse.next()
+export async function middleware(req: NextRequest) {
+  const token = req.cookies.get('token')?.value
+  const pathname = req.nextUrl.pathname
 
-  // Redirect to auth page if user is not authenticated and on a non-public route
-  if (!isAuthenticated) return NextResponse.redirect(new URL('/auth', req.url))
-})
+  if (token && pathname === '/auth') return NextResponse.redirect(new URL('/', req.url))
+
+  if (isPublicRoute(pathname)) return NextResponse.next()
+
+  if (!token) return NextResponse.redirect(new URL('/auth', req.url))
+
+  try {
+    await jwtVerify(token, new TextEncoder().encode(JWT_SECRET))
+    return NextResponse.next()
+  } catch (e) {
+    return NextResponse.redirect(new URL('/auth', req.url))
+  }
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     '/(api|trpc)(.*)',
   ],
 }

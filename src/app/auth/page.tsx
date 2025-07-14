@@ -2,10 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
 import { FaApple } from 'react-icons/fa'
-import { SignInButton, SignUpButton } from '@clerk/nextjs'
 
-// import CreateAccountDialog from './_components/create-account-dialog'
-// import SignInDialog from './_components/sign-in-dialog'
+import CreateAccountDialog from './_components/create-account-dialog'
+import SignInDialog from './_components/sign-in-dialog'
+import OAuthButton from './_components/oauth-button'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -41,19 +41,22 @@ const Page = () => {
 
             {/* social buttons */}
             <div className='flex flex-col gap-4'>
-              <SignInButton mode='modal'>
+              {/* <SignInButton mode='modal'>
                 <Button variant='secondary'>
                   <FcGoogle />
                   Continue with Google
                 </Button>
-              </SignInButton>
+              </SignInButton> */}
 
-              <SignInButton mode='modal'>
-                <Button variant='secondary'>
-                  <FaApple />
-                  Continue with Apple
-                </Button>
-              </SignInButton>
+              <OAuthButton>
+                <FcGoogle />
+                Continue with Google
+              </OAuthButton>
+
+              <Button variant='secondary'>
+                <FaApple />
+                Continue with Apple
+              </Button>
             </div>
 
             {/* separator */}
@@ -65,9 +68,7 @@ const Page = () => {
             </div>
 
             {/* create account button */}
-            <SignUpButton mode='modal'>
-              <Button className='w-full'>Create account</Button>
-            </SignUpButton>
+            <Button className='w-full'>Create account</Button>
             <p className='text-foreground/70 mt-1 text-xs tracking-wide'>
               By signing up, you agree to the{' '}
               <Link
@@ -97,14 +98,12 @@ const Page = () => {
           {/* sign in button */}
           <div className='mt-10'>
             <h3 className='mb-4 text-xl font-bold'>Already have an account?</h3>
-            <SignInButton mode='modal'>
-              <Button
-                variant='outline'
-                className='w-full'
-              >
-                Sign in
-              </Button>
-            </SignInButton>
+            <Button
+              variant='outline'
+              className='w-full'
+            >
+              Sign in
+            </Button>
           </div>
         </div>
       </section>
