@@ -48,6 +48,7 @@ const FileUploader = ({ file, onFilesChange, isDisabled }: Props) => {
         className='hidden appearance-none'
         onChange={(e) => onFilesChange(e.target.files?.[0] || null)}
         disabled={isDisabled}
+        accept='image/*'
       />
       <CloudUploadIcon className='text-accent size-20' />
       <span className='text-sm text-gray-500'>Upload an image</span>

@@ -1,24 +1,20 @@
 import { ArrowLeftIcon } from 'lucide-react'
-import { notFound } from 'next/navigation'
 
 import Hero from '../_components/hero'
 
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getCurrentUser } from '@/lib/user'
-import { getUser, GetUserOutput } from '@/queries/user'
+import { getCurrentUser, getUser } from '@/lib/queries/user'
+import { User } from '@/types/user'
 
 const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
   const { username } = await params
   const currentUser = await getCurrentUser()
-  if (!currentUser) return notFound()
+  if (!currentUser) return null
 
   const isCurrentUser = currentUser.username === username
-  let otherUser: GetUserOutput | null = null
-  if (!isCurrentUser) {
-    otherUser = await getUser({ username, requesterId: currentUser.id })
-    if (!otherUser) return notFound()
-  }
+  let otherUser: User | null = null
+  if (!isCurrentUser) otherUser = await getUser(username)
 
   const user = isCurrentUser ? currentUser : otherUser!
 
@@ -36,7 +32,7 @@ const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
 
         <div className='flex flex-col items-start justify-center'>
           <span className='text-lg leading-none font-bold'>{user.name}</span>
-          <span className='text-foreground/60 text-sm'>{user.postsCount} posts</span>
+          <span className='text-foreground/60 text-sm'>{user.tweetsCount} tweets</span>
         </div>
       </header>
 

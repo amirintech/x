@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/user'
+import { getCurrentUser } from '@/lib/queries/user'
 import { createUploadthing, type FileRouter } from 'uploadthing/next'
 import { UploadThingError } from 'uploadthing/server'
 

@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
 import { CalendarClockIcon, ImageIcon, MapPinIcon, VoteIcon } from 'lucide-react'
 import { genUploader } from 'uploadthing/client'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 import ComposerAction from './composer-action'
 import FileUploader from './file-uploader'
@@ -15,12 +15,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { renameFile } from '@/lib/files'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getCurrentUser } from '@/lib/user'
+import { getCurrentUser } from '@/lib/queries/user'
+import { createTweet } from '@/lib/queries/tweet'
+import { queryClient } from '@/components/providers/react-query-provider'
 
 const TweetComposer = () => {
   const [content, setContent] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const [showFileUploader, setShowFileUploader] = useState(false)
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false)
   const [file, setFile] = useState<File | null>(null)
 
   const actions = useMemo(
@@ -44,6 +46,19 @@ const TweetComposer = () => {
   } = useQuery({
     queryKey: ['currentUser'],
     queryFn: getCurrentUser,
+  })
+
+  const { mutate, status: mutationStatus } = useMutation({
+    mutationFn: (mediaSrcs: string[]) => createTweet(content.trim(), mediaSrcs),
+    onSuccess: () => {
+      setContent('')
+      setFile(null)
+      setShowFileUploader(false)
+      // queryClient.setQueryData()
+    },
+    onError: () => {
+      toast.error('Failed to create tweet')
+    },
   })
 
   if (isUserLoading || status === 'pending')
@@ -75,9 +90,9 @@ const TweetComposer = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsUploadingMedia(true)
     try {
-      const mediaSrcs: string[] = []
+      const mediaURLs: string[] = []
       if (file) {
         const renamedFile = renameFile(file, `${user.id}-${Date.now()}.${file.type.split('/')[1]}`)
         const fileResult = await genUploader().uploadFiles('profileImageUploader', {
@@ -85,34 +100,14 @@ const TweetComposer = () => {
           onUploadProgress: () => {},
           onUploadBegin: () => {},
         })
-        mediaSrcs.push(fileResult[0].ufsUrl)
+        mediaURLs.push(fileResult[0].ufsUrl)
       }
-      await createTweet(mediaSrcs)
+      mutate(mediaURLs)
     } catch (error) {
       console.error(error)
       toast.error('Failed to create tweet')
     } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const createTweet = async (mediaSrcs: string[]) => {
-    setIsLoading(true)
-    try {
-      await axios.post('/api/tweet', {
-        userId: user.id,
-        content: content.trim(),
-        mediaSrcs,
-      })
-      setContent('')
-      setFile(null)
-      setShowFileUploader(false)
-      toast.success('Tweet posted successfully!')
-    } catch (error) {
-      console.error(error)
-      toast.error('Failed to create tweet')
-    } finally {
-      setIsLoading(false)
+      setIsUploadingMedia(false)
     }
   }
 
@@ -120,7 +115,8 @@ const TweetComposer = () => {
     setFile(newFile)
   }
 
-  const isSubmitDisabled = isLoading || (!content.trim() && file === null)
+  const isActionDisabled = mutationStatus === 'pending' || isUploadingMedia
+  const isSubmitDisabled = isActionDisabled || (!content.trim() && file === null)
 
   return (
     <div className='min-h-[132px] w-full p-3'>
@@ -139,7 +135,7 @@ const TweetComposer = () => {
             className='caret-accent resize-none rounded-none border-none !bg-transparent p-0 !text-xl shadow-none focus-visible:ring-0'
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            disabled={isLoading}
+            disabled={isActionDisabled}
           />
 
           {/* File Uploader */}
@@ -148,7 +144,7 @@ const TweetComposer = () => {
               <FileUploader
                 file={file}
                 onFilesChange={handleFilesChange}
-                isDisabled={isLoading}
+                isDisabled={isActionDisabled}
               />
             </div>
           )}
@@ -159,7 +155,10 @@ const TweetComposer = () => {
               {actions.map((action) => (
                 <ComposerAction
                   key={action.label}
-                  {...action}
+                  label={action.label}
+                  icon={action.icon}
+                  onClick={action.onClick}
+                  isDisabled={isActionDisabled}
                 />
               ))}
             </div>
@@ -169,7 +168,7 @@ const TweetComposer = () => {
               disabled={isSubmitDisabled}
               size='sm'
             >
-              {isLoading ? 'Tweeting...' : 'Tweet'}
+              {isActionDisabled ? 'Tweeting...' : 'Tweet'}
             </Button>
           </div>
         </form>

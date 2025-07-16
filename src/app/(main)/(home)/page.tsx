@@ -1,4 +1,4 @@
-import TweetList from './_components/tweet-list'
+import Feed from './_components/feed'
 
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -18,7 +18,7 @@ const Page = () => {
           <TweetComposer />
           <Separator />
           {/* feed */}
-          <TweetList />
+          <Feed />
         </TabsContent>
 
         <TabsContent value='Following'>
@@ -26,7 +26,7 @@ const Page = () => {
           <TweetComposer />
           <Separator />
           {/* feed */}
-          <TweetList />
+          <Feed />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,7 +1,8 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import axios from 'axios'
-import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { HiCheckBadge } from 'react-icons/hi2'
 import { Repeat2Icon, ShareIcon } from 'lucide-react'
@@ -13,12 +14,12 @@ import TweetAction from './tweet-action'
 import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
 
 import type { Tweet } from '@/types/tweet'
-import { toast } from 'sonner'
+import ElapsedTimeLabel from './elapsed-time-label'
 
-type Props = {
+export type TweetProps = {
   createdAt: string
   replies: number
-  mediaSrcs: string[]
+  mediaURLs: string[]
   id: string
   retweets: number
   views: number
@@ -30,7 +31,7 @@ type Props = {
     id: string
     isVerified: boolean | null
     username: string
-    imageUrl: string | null
+    profilePicture: string | null
     name: string | null
   }
   isLiked: boolean
@@ -46,12 +47,12 @@ const Tweet = ({
   retweets,
   replies,
   views,
-  mediaSrcs,
+  mediaURLs,
   author,
   isRetweeted,
   isLiked,
   isBookmarked,
-}: Props) => {
+}: TweetProps) => {
   const [retweeted, setRetweeted] = useState(isRetweeted)
   const [retweetsCount, setRetweetsCount] = useState(retweets)
   const [liked, setLiked] = useState(isLiked)
@@ -187,7 +188,7 @@ const Tweet = ({
     <article className='mx-auto grid grid-cols-[auto_1fr] gap-2 p-3'>
       {/* user avatar */}
       <Avatar className='size-10'>
-        <AvatarImage src={author.imageUrl || '/images/default-profile.png'} />
+        <AvatarImage src={author.profilePicture || '/images/default-profile.png'} />
         <AvatarFallback>{author.name || author.username}</AvatarFallback>
       </Avatar>
 
@@ -205,16 +206,16 @@ const Tweet = ({
           </div>
           <span>@{author.username}</span>
           <span>&bull;</span>
-          <span suppressHydrationWarning>{getTimeAgo(createdAt)}</span>
+          <ElapsedTimeLabel startTime={new Date(createdAt)} />
         </div>
 
         {/* tweet content */}
         <div>
           {content && <p>{content}</p>}
-          {mediaSrcs && mediaSrcs.length > 0 && (
+          {mediaURLs && mediaURLs.length > 0 && (
             <div className='relative mt-2 h-96 w-full'>
               <Image
-                src={mediaSrcs[0]}
+                src={mediaURLs[0]}
                 alt='tweet media'
                 fill
                 className='rounded-lg object-cover'
@@ -248,18 +249,3 @@ const Tweet = ({
 }
 
 export default Tweet
-
-function getTimeAgo(dateString: string) {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diff = (now.getTime() - date.getTime()) / 1000 // seconds
-  if (diff < 60) return `${Math.floor(diff)}s`
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`
-  if (diff < 2592000) return `${Math.floor(diff / 86400)}d`
-  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
-  if (now.getFullYear() !== date.getFullYear()) {
-    options.year = 'numeric'
-  }
-  return date.toLocaleDateString(undefined, options)
-}

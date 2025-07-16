@@ -6,16 +6,31 @@ import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import Input from '@/components/shared/input'
 import { Button } from '@/components/ui/button'
-import { GetUserOutput } from '@/queries/user'
+import { useQuery } from '@tanstack/react-query'
+import { getCurrentUser } from '@/lib/queries/user'
+import { User } from '@/types/user'
 
-type Props = { children: React.ReactNode; user: GetUserOutput }
+type Props = { children: React.ReactNode }
 
-const ProfileUpdateDialog = ({ children, user }: Props) => {
-  const { bannerUrl, imageUrl } = user
-  const [formUser, setFormUser] = useState(user)
+const ProfileUpdateDialog = ({ children }: Props) => {
+  const {
+    data: user,
+    isLoading,
+    status,
+  } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => getCurrentUser(),
+  })
+  const [formUser, setFormUser] = useState<User | null>(user || null)
+
+  if (status === 'pending' || isLoading) return null
+
+  if (!formUser) return null
+
+  const { bannerUrl, imageUrl } = formUser
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFormUser({ ...formUser, [e.target.name]: e.target.value })
+    setFormUser({ ...formUser, [e.target.name]: e.target.value } as User)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -83,21 +98,21 @@ const ProfileUpdateDialog = ({ children, user }: Props) => {
 
             <Input
               label='Bio'
-              value={formUser.bio}
+              value={formUser.bio || ''}
               onChange={handleChange}
               name='bio'
             />
 
             <Input
               label='Location'
-              value={formUser.location}
+              value={formUser.location || ''}
               onChange={handleChange}
               name='location'
             />
 
             <Input
               label='Website'
-              value={formUser.website}
+              value={formUser.website || ''}
               onChange={handleChange}
               name='website'
             />

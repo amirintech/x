@@ -21,7 +21,7 @@ import Logo from './logo'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useNavbarScroll } from '@/hooks/useNavbarScroll'
-import { getCurrentUser } from '@/lib/user'
+import { getCurrentUser } from '@/lib/queries/user'
 import { useQuery } from '@tanstack/react-query'
 
 const Navbar = () => {

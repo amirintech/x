@@ -8,8 +8,9 @@ export type User = {
   website?: string
   followersCount: number
   followingCount: number
-  postsCount: number
-  imageUrl?: string
-  bannerUrl?: string
+  tweetsCount: number
+  profilePicture?: string
+  bannerPicture?: string
   isVerified: boolean
+  isLocked: boolean
 }

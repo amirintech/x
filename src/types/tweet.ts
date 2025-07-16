@@ -8,5 +8,5 @@ export type Tweet = {
   replies: number
   views: number
   tags: string[]
-  mediaSrcs?: string[]
+  mediaURLs?: string[]
 }

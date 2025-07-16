@@ -2,14 +2,14 @@
 
 import React from 'react'
 
-import { getCurrentUser } from '@/lib/user'
-import { getTweetsByUser } from '@/queries/tweet'
 import { Separator } from '@/components/ui/separator'
-import Tweet from '@/components/shared/tweet'
+import Tweet, { TweetProps } from '@/components/shared/tweet'
 
-type Props = {}
+type Props = {
+  tweets: TweetProps[] | null
+}
 
-const TweetList = (props: Props) => {
+const TweetList = ({ tweets }: Props) => {
   //   const getTweets =  (limit: number, skip: number) => {
   //     const user = await getCurrentUser()
   //     if (!user) return null
@@ -27,7 +27,16 @@ const TweetList = (props: Props) => {
   //     </React.Fragment>
   //   ))
 
-  return <div>TweetList</div>
+  return (
+    <div>
+      {tweets?.map((tweet) => (
+        <React.Fragment key={tweet.id}>
+          <Tweet {...tweet} />
+          <Separator />
+        </React.Fragment>
+      ))}
+    </div>
+  )
 }
 
 export default TweetList
